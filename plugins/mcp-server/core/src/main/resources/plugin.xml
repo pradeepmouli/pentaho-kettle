@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin id="mcp-server-plugin" 
+        type="CARTE" 
+        class="org.pentaho.di.mcp.McpServerServlet">
+  <description>MCP Server for Kettle transformations and jobs</description>
+  <category>Utility</category>
+  <tooltip>Model Context Protocol server for remote transformation and job management</tooltip>
+  <context-path>/kettle/mcp</context-path>
+</plugin>
