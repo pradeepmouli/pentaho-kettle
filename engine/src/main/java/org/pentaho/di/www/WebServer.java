@@ -28,6 +28,7 @@ import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceFactory;
 import org.glassfish.jersey.servlet.ServletContainer;
+import org.pentaho.di.www.mcp.MCPServer;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.server.Connector;
@@ -93,6 +94,7 @@ public class WebServer {
   private IWebServerShutdownHandler webServerShutdownHandler = new DefaultWebServerShutdownHandler();
 
   private SslConfiguration sslConfig;
+  private MCPServer mcpServer;
 
   public WebServer( LogChannelInterface log, TransformationMap transformationMap, JobMap jobMap,
       SocketRepository socketRepository, List<SlaveServerDetection> detections, String hostname, int port, boolean join,
@@ -128,6 +130,16 @@ public class WebServer {
       // Log error but continue regular operations to make sure Carte continues to run properly
       //
       log.logError( "Error calling extension point CarteStartup", e );
+    }
+
+    // Start MCP server on a different port (Carte port + 1000)
+    try {
+      int mcpPort = port + 1000;
+      mcpServer = new MCPServer(log, transformationMap, jobMap, mcpPort);
+      mcpServer.start();
+      log.logBasic("MCP Server started on port " + mcpPort);
+    } catch (Exception e) {
+      log.logError("Failed to start MCP server", e);
     }
 
     if ( join ) {
@@ -317,6 +329,12 @@ public class WebServer {
         // Stop the server...
         //
         server.stop();
+        
+        // Stop MCP server
+        if (mcpServer != null) {
+          mcpServer.stop();
+        }
+        
         KettleEnvironment.shutdown();
         if ( webServerShutdownHandler != null ) {
           webServerShutdownHandler.shutdownWebServer();
