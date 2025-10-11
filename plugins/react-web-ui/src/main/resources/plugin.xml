@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin id="SpoonWebUIPlugin" description="React-based web UI replacement for Spoon desktop interface">
+  <libraries>
+    <library name="react-web-ui-${project.version}.jar"/>
+  </libraries>
+  
+  <class-name>org.pentaho.di.ui.spoon.webui.SpoonWebUIPlugin</class-name>
+  
+  <attributes>
+    <attribute id="ui-enabled" value="true"/>
+    <attribute id="web-server-port" value="8080"/>
+  </attributes>
+</plugin>
